@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>发质诊断与洗发水成分推荐</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+.container{max-width:640px;width:100%}
+.card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:32px;margin-bottom:16px}
+h1{color:#fff;font-size:22px;text-align:center;margin-bottom:8px}
+.subtitle{color:rgba(255,255,255,.45);text-align:center;font-size:13px;margin-bottom:28px}
+.q-block{margin-bottom:24px}
+.q-label{color:#e0e0ff;font-size:15px;font-weight:600;display:block;margin-bottom:10px}
+.q-hint{color:rgba(255,255,255,.35);font-size:12px;margin-left:6px;font-weight:400}
+.options{display:flex;flex-wrap:wrap;gap:8px}
+.opt-btn{flex:1 1 calc(50% - 4px);min-width:140px}
+.opt-btn input{display:none}
+.opt-btn label{display:block;padding:12px 14px;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.65);text-align:center;cursor:pointer;transition:all .2s;font-size:14px}
+.opt-btn input:checked+label{background:rgba(99,102,241,.3);border-color:#818cf8;color:#fff;box-shadow:0 0 12px rgba(99,102,241,.2)}
+.opt-btn label:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+.submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;color:#fff;font-size:17px;font-weight:600;cursor:pointer;transition:all .3s;letter-spacing:1px}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,.4)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.error-msg{color:#f87171;text-align:center;padding:10px;font-size:14px}
+
+h2{color:#e0e0ff;font-size:16px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)}
+.pr{display:flex;align-items:center;margin-bottom:10px;gap:12px}
+.pr-l{width:70px;color:rgba(255,255,255,.65);font-size:13px;text-align:right}
+.pr-w{flex:1;height:22px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden}
+.pr-f{height:100%;border-radius:6px;transition:width .6s}
+.pr-f.l{background:linear-gradient(90deg,#f59e0b,#fbbf24)}.pr-f.m{background:linear-gradient(90deg,#6366f1,#818cf8)}.pr-f.h{background:linear-gradient(90deg,#10b981,#34d399)}
+.pr-v{width:38px;color:rgba(255,255,255,.55);font-size:12px}
+
+.diag-card{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px}
+.diag-p{color:#a5b4fc;font-size:26px;font-weight:700;margin-bottom:10px}
+.diag-row{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.diag-item{text-align:center}
+.diag-n{color:rgba(255,255,255,.45);font-size:12px;margin-bottom:4px}
+.diag-s{color:#e0e0ff;font-size:18px;font-weight:700}
+.diag-b{width:50px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:5px auto 0;overflow:hidden}
+.diag-bf{height:100%;background:#818cf8;border-radius:2px}
+
+.syn-item{color:rgba(255,255,255,.6);font-size:13px;padding:4px 0}.syn-item:before{content:'>> ';color:#fbbf24}
+
+.ing-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:12px}
+.ing-i{flex:1;min-width:0}
+.ing-n{color:#e0e0ff;font-size:14px;font-weight:600}
+.ing-s{display:inline-block;background:rgba(245,158,11,.2);color:#fbbf24;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px}
+.ing-m{color:rgba(255,255,255,.45);font-size:12px;margin-top:2px}
+.ing-src{color:rgba(255,255,255,.3);font-size:11px}
+.ing-sc{text-align:right;min-width:65px}
+.ing-sv{color:#34d399;font-size:16px;font-weight:700}
+.ing-sb{height:4px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:3px;overflow:hidden}
+.ing-sbf{height:100%;background:#34d399;border-radius:2px}
+
+.chart-row{display:flex;align-items:center;margin-bottom:8px;gap:10px}
+.chart-l{width:130px;color:rgba(255,255,255,.55);font-size:13px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-w{flex:1;height:18px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+.chart-f{height:100%;border-radius:4px;background:linear-gradient(90deg,#6366f1,#34d399)}
+.chart-v{width:38px;color:rgba(255,255,255,.45);font-size:12px}
+
+.avoid-tags{display:flex;flex-wrap:wrap;gap:8px}
+.avoid-tag{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.25);color:#fca5a5;padding:5px 14px;border-radius:20px;font-size:13px}
+
+.back-btn{display:block;width:200px;margin:20px auto 0;padding:12px;text-align:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;cursor:pointer;transition:all .2s}
+.back-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+#survey-pg,#result-pg{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ============ 问卷页 ============ -->
+<div id="survey-pg">
+<div class="card">
+<h1>发质诊断与成分推荐</h1>
+<div class="subtitle">基于 5 篇学术论文的知识图谱 | 7 题问卷 · 专属成分推荐</div>
+<form id="survey-form"></form>
+<div class="error-msg" id="survey-err"></div>
+</div>
+</div>
+
+<!-- ============ 结果页 ============ -->
+<div class="card" id="result-pg" style="display:none">
+<div id="result-content"></div>
+
+<div class="card" style="margin-top:16px;border-color:rgba(99,102,241,.3)">
+  <h2 style="text-align:center">帮我们做得更好 (30秒)</h2>
+  <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+    <div style="flex:1;min-width:160px;text-align:center">
+      <img src="data:image/jpeg;base64,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" alt="反馈问卷二维码" style="width:140px;height:140px;border-radius:12px;border:2px solid rgba(99,102,241,.3)">
+      <div style="color:rgba(255,255,255,.4);font-size:11px;margin-top:6px">扫码填写反馈(微信/浏览器均可)</div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.8">
+        <div style="margin-bottom:6px">请你回答3道题：</div>
+        <div>1. AI推荐你觉得靠谱吗？</div>
+        <div>2. 你以前会看成分表吗？</div>
+        <div>3. 这个工具对你最有用的地方？</div>
+        <div style="margin-top:10px;color:rgba(255,255,255,.3);font-size:11px">你的反馈将帮助改进AI推荐算法</div>
+      </div>
+    </div>
+  </div>
+</div>
+<button class="back-btn" onclick="backToSurvey()">重新测试</button>
+</div>
+
+</div>
+
+<script>
+// ==================== EMBEDDED DATA ====================
+const PAPER_DATA = {"questions": [{"id": "Q1", "text": "洗头后多久头皮开始明显出油？", "options": {"A": {"label": "不到1天就油了", "score": {"oil_level": 3}}, "B": {"label": "1-2天开始出油", "score": {"oil_level": 2}}, "C": {"label": "2-3天才出油", "score": {"oil_level": 1}}, "D": {"label": "3天以上都不油", "score": {"oil_level": 0}}}, "paper_source": "paper_5 (Oiliness分类)"}, {"id": "Q2", "text": "你的头皮是否有以下敏感症状？（可多选）", "options": {"A": {"label": "经常瘙痒", "score": {"sensitive": 1, "itchy": 1}}, "B": {"label": "洗后有刺痛感", "score": {"sensitive": 1, "sting": 1}}, "C": {"label": "头皮发红", "score": {"sensitive": 1, "redness": 1}}, "D": {"label": "以上都没有", "score": {"sensitive": 0}}}, "multi": true, "paper_source": "paper_1 (头皮刺激) + paper_5 (Erythema)"}, {"id": "Q3", "text": "你的头发目前处于什么状态？", "options": {"A": {"label": "健康有光泽", "score": {"damage_level": 0}}, "B": {"label": "干枯毛躁", "score": {"damage_level": 1}}, "C": {"label": "分叉断裂", "score": {"damage_level": 2}}, "D": {"label": "烫染后受损严重", "score": {"damage_level": 3}}}, "paper_source": "paper_1 (损伤分类) + paper_2 (TEM分级)"}, {"id": "Q4", "text": "你是否有头屑困扰？", "options": {"A": {"label": "几乎没有头屑", "score": {"dandruff": 0}}, "B": {"label": "少量细碎头屑", "score": {"dandruff": 1}}, "C": {"label": "大片头屑，经常可见", "score": {"dandruff": 2}}, "D": {"label": "头屑伴随瘙痒", "score": {"dandruff": 2, "itchy": 1}}}, "paper_source": "paper_5 (Dandruff分类)"}, {"id": "Q5", "text": "你是否有脱发或发量减少的困扰？", "options": {"A": {"label": "没有", "score": {"hair_loss": 0}}, "B": {"label": "轻微掉发（洗头时掉几根）", "score": {"hair_loss": 1}}, "C": {"label": "明显掉发（发缝变宽）", "score": {"hair_loss": 2}}, "D": {"label": "严重脱发（成片掉落）", "score": {"hair_loss": 3}}}, "paper_source": "补充（脱发为常见护发诉求）"}, {"id": "Q6", "text": "你的发丝粗细如何？", "options": {"A": {"label": "细软，容易扁塌", "score": {"hair_thickness": 0}}, "B": {"label": "中等粗细", "score": {"hair_thickness": 1}}, "C": {"label": "粗硬，有弹性", "score": {"hair_thickness": 2}}}, "paper_source": "paper_1 (髓质层描述)"}, {"id": "Q7", "text": "你更看重洗发水的什么功效？（可多选）", "options": {"A": {"label": "清洁控油", "score": {"prefer_clean": 1}}, "B": {"label": "滋润保湿", "score": {"prefer_moisture": 1}}, "C": {"label": "修复受损", "score": {"prefer_repair": 1}}, "D": {"label": "温和不刺激", "score": {"prefer_mild": 1}}, "E": {"label": "防脱固发", "score": {"prefer_anti_loss": 1}}}, "multi": true, "paper_source": "paper_4 (属性定义)"}], "ingredients": [{"name": "透明质酸", "功效": "补水保湿", "适用发质": ["干燥"], "paper_source": "paper_5"}, {"name": "泛醇（维生素B5）", "功效": "渗透保湿+抗炎修复", "适用发质": ["敏感", "红斑"], "paper_source": "paper_5"}, {"name": "肌醇", "功效": "调节脂质代谢", "适用发质": ["油性"], "paper_source": "paper_5"}, {"name": "吡罗克酮", "功效": "抗真菌+去屑", "适用发质": ["头屑"], "paper_source": "paper_5"}, {"name": "尿囊素", "功效": "舒缓抗刺激", "适用发质": ["毛囊炎", "敏感"], "paper_source": "paper_5"}, {"name": "β-葡聚糖", "功效": "免疫调节+屏障修复", "适用发质": ["通用"], "paper_source": "paper_5"}, {"name": "神经酰胺", "功效": "屏障修复", "适用发质": ["干燥", "受损"], "paper_source": "paper_5"}, {"name": "水解角蛋白", "功效": "填充皮质层缝隙，修复损伤", "适用发质": ["受损", "烫染"], "paper_source": "paper_1"}, {"name": "阳离子聚合物", "功效": "静电吸附修复毛鳞片", "适用发质": ["受损", "毛躁"], "paper_source": "paper_1"}, {"name": "维生素E", "功效": "抗氧化，清除自由基", "适用发质": ["UV损伤", "老化"], "paper_source": "paper_1"}, {"name": "阿魏酸", "功效": "抗氧化，保护二硫键", "适用发质": ["化学损伤"], "paper_source": "paper_1"}, {"name": "18-MEA类似物", "功效": "恢复疏水保护层", "适用发质": ["毛鳞片受损"], "paper_source": "paper_1"}], "scores": {"透明质酸": {"oil_control": 0.1, "repair": 0.4, "mildness": 1.0, "moisturizing": 1.0, "anti_hair_loss": 0.1, "avoid_if_sensitive": false}, "泛醇（维生素B5）": {"oil_control": 0.1, "repair": 0.6, "mildness": 1.0, "moisturizing": 0.8, "anti_hair_loss": 0.5, "avoid_if_sensitive": false}, "肌醇": {"oil_control": 0.9, "repair": 0.2, "mildness": 0.6, "moisturizing": 0.3, "anti_hair_loss": 0.4, "avoid_if_sensitive": false}, "吡罗克酮": {"oil_control": 0.7, "repair": 0.2, "mildness": 0.3, "moisturizing": 0.1, "anti_hair_loss": 0.3, "avoid_if_sensitive": false}, "尿囊素": {"oil_control": 0.1, "repair": 0.4, "mildness": 1.0, "moisturizing": 0.5, "anti_hair_loss": 0.2, "avoid_if_sensitive": false}, "β-葡聚糖": {"oil_control": 0.1, "repair": 0.5, "mildness": 0.9, "moisturizing": 0.6, "anti_hair_loss": 0.3, "avoid_if_sensitive": false}, "神经酰胺": {"oil_control": 0.1, "repair": 0.8, "mildness": 0.8, "moisturizing": 0.9, "anti_hair_loss": 0.1, "avoid_if_sensitive": false}, "水解角蛋白": {"oil_control": 0.2, "repair": 1.0, "mildness": 0.6, "moisturizing": 0.5, "anti_hair_loss": 0.3, "avoid_if_sensitive": false}, "阳离子聚合物": {"oil_control": 0.3, "repair": 0.9, "mildness": 0.4, "moisturizing": 0.3, "anti_hair_loss": 0.1, "avoid_if_sensitive": true}, "维生素E": {"oil_control": 0.2, "repair": 0.6, "mildness": 0.7, "moisturizing": 0.5, "anti_hair_loss": 0.4, "avoid_if_sensitive": false}, "阿魏酸": {"oil_control": 0.1, "repair": 0.8, "mildness": 0.3, "moisturizing": 0.2, "anti_hair_loss": 0.2, "avoid_if_sensitive": true}, "18-MEA类似物": {"oil_control": 0.1, "repair": 0.9, "mildness": 0.2, "moisturizing": 0.4, "anti_hair_loss": 0.1, "avoid_if_sensitive": false}}, "weights": {"oily": {"oil_control": 0.6, "mildness": 0.1, "moisturizing": 0.1, "repair": 0.1, "anti_hair_loss": 0.1}, "dry": {"oil_control": 0.1, "mildness": 0.4, "moisturizing": 0.1, "repair": 0.4, "anti_hair_loss": 0.0}, "damaged": {"oil_control": 0.05, "mildness": 0.3, "moisturizing": 0.1, "repair": 0.5, "anti_hair_loss": 0.05}, "normal": {"oil_control": 0.2, "mildness": 0.2, "moisturizing": 0.2, "repair": 0.2, "anti_hair_loss": 0.2}}, "synergy": [{"trigger": "hair_loss >= 2", "force_add": ["泛醇（维生素B5）", "肌醇"], "reason": "脱发困扰严重，泛醇+肌醇联合促进头皮血液循环和毛囊营养供应"}, {"trigger": "dandruff >= 1 and oil_level >= 2", "force_add": ["吡罗克酮", "肌醇"], "reason": "油性头屑需吡罗克酮抗真菌+肌醇调节脂质代谢双重作用"}, {"trigger": "damage_level >= 2 and sensitive >= 1", "force_add": ["β-葡聚糖", "神经酰胺"], "reason": "受损+敏感需屏障修复组合，β-葡聚糖免疫调节+神经酰胺屏障修复"}, {"trigger": "damage_level >= 2", "force_add": ["水解角蛋白"], "reason": "受损发质必须补充结构蛋白，水解角蛋白填充皮质层缝隙"}, {"trigger": "oil_level >= 2 and sensitive >= 1", "force_add": ["尿囊素"], "reason": "油性+敏感头皮需舒缓抗刺激"}], "rules": [{"condition": "oil_level >= 2", "recommend": ["肌醇", "吡罗克酮"], "avoid": ["18-MEA类似物", "厚重油脂"], "paper_source": "paper_5"}, {"condition": "oil_level <= 1 and damage_level <= 1", "recommend": ["透明质酸", "泛醇", "神经酰胺"], "avoid": ["强清洁表活"], "paper_source": "paper_5"}, {"condition": "damage_level >= 2", "recommend": ["水解角蛋白", "神经酰胺", "阳离子聚合物", "β-葡聚糖"], "avoid": ["强碱性产品"], "paper_source": "paper_1 + paper_2"}, {"condition": "sensitive >= 1", "recommend": ["泛醇", "尿囊素", "β-葡聚糖"], "avoid": ["香精", "色素", "酒精", "SLS/SLES"], "paper_source": "paper_1 + paper_5"}, {"condition": "dandruff >= 1", "recommend": ["吡罗克酮"], "note": "可配合抗真菌成分使用", "paper_source": "paper_5", "avoid": ["刺激性防腐剂", "过度清洁产品"]}, {"condition": "hair_loss >= 2", "recommend": ["泛醇", "β-葡聚糖", "肌醇"], "note": "促进头皮血液循环", "paper_source": "paper_5 (SPI改善)", "avoid": ["刺激性成分"]}, {"condition": "damage_level >= 2", "recommend": ["18-MEA类似物", "阳离子聚合物", "水解角蛋白", "阿魏酸"], "note": "修复毛鳞片+保护二硫键", "paper_source": "paper_1", "avoid": ["强碱性产品", "高浓度氯化钠"]}], "papers": [{"id": "paper_1", "authors": "He et al.", "year": 2023, "title": "头发染烫损伤机制与干预"}, {"id": "paper_2", "authors": "Grosvenor et al.", "year": 2018, "title": "漂白对头发物理化学破坏的TEM与蛋白质组学研究"}, {"id": "paper_3", "authors": "Lee et al.", "year": 2024, "title": "基于深度学习的护肤品推荐----聚焦成分分析与面部皮肤状况"}, {"id": "paper_4", "authors": "Liu et al.", "year": 2024, "title": "超越文字的美丽----基于成分的可解释推荐"}, {"id": "paper_5", "authors": "Kim et al.", "year": 2024, "title": "AI处方个性化头皮化妆品改善头皮状况 ---- 100人临床试验"}], "top_n": 7};
+
+// ==================== ENGINE ====================
+class HairEngine {
+  constructor(answers) {
+    this.answers = answers;
+    this.raw = {};
+    this.profile = {};
+    this._extractRaw();
+    this._buildProfile();
+  }
+
+  _extractRaw() {
+    const dims = { oil_level:0, sensitive:0, damage_level:0, dandruff:0, hair_loss:0, hair_thickness:0,
+      prefer_clean:0, prefer_moisture:0, prefer_repair:0, prefer_mild:0, prefer_anti_loss:0,
+      itchy:0, sting:0, redness:0 };
+    for (const q of PAPER_DATA.questions) {
+      const choices = this.answers[q.id] || [];
+      for (const c of choices) {
+        const sc = q.options[c]?.score || {};
+        for (const [k, v] of Object.entries(sc)) dims[k] = (dims[k] || 0) + v;
+      }
+    }
+    this.raw = dims;
+  }
+
+  _buildProfile() {
+    const r = this.raw;
+    this.profile.oil_need = +Math.min(r.oil_level / 3 * 0.7 + r.prefer_clean * 0.3, 1).toFixed(2);
+    this.profile.moisture_need = +Math.min((1 - r.oil_level / 3) * 0.5 + (r.damage_level / 3) * 0.3 + r.prefer_moisture * 0.2, 1).toFixed(2);
+    this.profile.repair_need = +Math.min((r.damage_level / 3) * 0.7 + r.prefer_repair * 0.3, 1).toFixed(2);
+    const sens = r.sensitive + r.itchy + r.sting + r.redness;
+    this.profile.mild_need = +Math.min(Math.min(sens / 3, 1) * 0.6 + r.prefer_mild * 0.4, 1).toFixed(2);
+    this.profile.anti_loss_need = +Math.min((r.hair_loss / 3) * 0.7 + r.prefer_anti_loss * 0.3, 1).toFixed(2);
+  }
+
+  isSensitive() { return (this.raw.sensitive + this.raw.itchy + this.raw.sting + this.raw.redness) >= 1; }
+
+  classify() {
+    const sc = { oily: 0, dry: 0, normal: 0, damaged: 0 };
+    for (const q of PAPER_DATA.questions) {
+      for (const c of (this.answers[q.id] || [])) {
+        const sm = q.options[c]?.score || {};
+        sc.oily += (sm.oil_level || 0) * 2;
+        if (sm.oil_level !== undefined) sc.dry += (3 - sm.oil_level);
+        sc.damaged += (sm.damage_level || 0) * 2;
+        sc.damaged += (sm.prefer_repair || 0) * 2;
+        if (sm.damage_level !== undefined) sc.normal += (3 - sm.damage_level);
+        if (sm.oil_level >= 1 && sm.oil_level <= 2) sc.normal += 2;
+      }
+    }
+    const primary = Object.entries(sc).sort((a, b) => b[1] - a[1])[0][0];
+    const names = { oily: '油性发质', dry: '干性发质', normal: '中性发质', damaged: '受损发质' };
+    return { primary, scores: sc, names };
+  }
+
+  recommend() {
+    const { primary } = this.classify();
+    const weights = PAPER_DATA.weights[primary] || PAPER_DATA.weights.normal;
+    const sensitive = this.isSensitive();
+    const scoresDb = PAPER_DATA.scores;
+    const dimMap = { oil_control: 'oil_need', repair: 'repair_need', mildness: 'mild_need',
+      moisturizing: 'moisture_need', anti_hair_loss: 'anti_loss_need' };
+
+    let results = [];
+    for (const [name, ing] of Object.entries(scoresDb)) {
+      if (sensitive && ing.avoid_if_sensitive) continue;
+      let score = 0;
+      for (const [dim, w] of Object.entries(weights)) {
+        const pk = dimMap[dim] || dim;
+        const pv = this.profile[pk] || 0.5;
+        score += (ing[dim] || 0) * w * (0.5 + 0.5 * pv);
+      }
+      results.push({ name, score: +score.toFixed(4), ...ing });
+    }
+    results.sort((a, b) => b.score - a.score);
+
+    // Synergy
+    const force = {};
+    for (const rule of (PAPER_DATA.synergy || [])) {
+      if (this._triggers(rule.trigger)) {
+        for (const ing of rule.force_add) {
+          if (results.find(r => r.name === ing)) force[ing] = rule.reason;
+        }
+      }
+    }
+
+    let recs = [];
+    const seen = new Set();
+    const topN = PAPER_DATA.top_n || 7;
+    for (const r of results) {
+      if (force[r.name]) { recs.push({ ...r, synergy: force[r.name] }); seen.add(r.name); }
+    }
+    for (const r of results) {
+      if (!seen.has(r.name) && recs.length < topN) { recs.push({ ...r, synergy: null }); seen.add(r.name); }
+    }
+    return { recs, weights, sensitive, primary, allRanked: results };
+  }
+
+  _triggers(cond) {
+    if (!cond) return false;
+    for (const part of cond.split('and')) {
+      const t = part.trim().split(/\s+/);
+      if (t.length < 3) continue;
+      const [k, op, v] = [t[0], t[1], parseFloat(t[2])];
+      if (isNaN(v)) continue;
+      const actual = this.raw[k] || 0;
+      if (op === '>=' && actual < v) return false;
+      if (op === '>' && actual <= v) return false;
+      if (op === '<=' && actual > v) return false;
+      if (op === '<' && actual >= v) return false;
+      if (op === '==' && actual !== v) return false;
+    }
+    return true;
+  }
+
+  triggeredSynergy() {
+    return (PAPER_DATA.synergy || []).filter(r => this._triggers(r.trigger));
+  }
+
+  avoidList() {
+    const items = new Set();
+    for (const rule of (PAPER_DATA.rules || [])) {
+      try { if (rule.condition && this._triggers(rule.condition)) for (const a of (rule.avoid || [])) items.add(a); }
+      catch(e) {}
+    }
+    return [...items];
+  }
+}
+
+
+// ==================== UI ====================
+function buildSurvey() {
+  const form = document.getElementById('survey-form');
+  let html = '';
+  for (const q of PAPER_DATA.questions) {
+    const m = q.multi ? '<span class="q-hint">(可多选)</span>' : '';
+    html += `<div class="q-block"><span class="q-label">${q.id}: ${q.text}${m}</span><div class="options">`;
+    for (const [k, o] of Object.entries(q.options)) {
+      html += `<div class="opt-btn">
+        <input type="${q.multi ? 'checkbox' : 'radio'}" name="${q.id}" id="${q.id}_${k}" value="${k}">
+        <label for="${q.id}_${k}">${k}) ${o.label}</label></div>`;
+    }
+    html += '</div></div>';
+  }
+  html += '<button type="submit" class="submit-btn">开始分析</button>';
+  form.innerHTML = html;
+
+  // Handle multi-select checkbox logic
+  form.addEventListener('change', function(e) {
+    const inp = e.target;
+    if (inp.type !== 'checkbox') return;
+    const name = inp.name;
+    const all = form.querySelectorAll(`input[name="${name}"]`);
+    const noneOpt = Array.from(all).find(o => {
+      const lbl = o.parentElement.querySelector('label').textContent;
+      return lbl.includes('没有') || lbl.includes('无');
+    });
+    if (noneOpt && inp === noneOpt && inp.checked) {
+      all.forEach(o => { if (o !== noneOpt) o.checked = false; });
+    } else if (noneOpt && inp.checked) {
+      noneOpt.checked = false;
+    }
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const err = document.getElementById('survey-err');
+    err.textContent = '';
+    const groups = new Set();
+    form.querySelectorAll('input[name]').forEach(i => groups.add(i.name));
+    let ok = true;
+    groups.forEach(name => {
+      if (form.querySelectorAll(`input[name="${name}"]:checked`).length === 0) ok = false;
+    });
+    if (!ok) { err.textContent = '请回答所有问题后再提交'; return; }
+
+    const fd = new FormData(form);
+    const answers = {};
+    for (const [k, v] of fd.entries()) {
+      if (!answers[k]) answers[k] = [];
+      answers[k].push(v);
+    }
+
+    showResult(answers);
+  });
+}
+
+function showResult(answers) {
+  const engine = new HairEngine(answers);
+  const { primary, scores, names } = engine.classify();
+  const { recs, weights, sensitive } = engine.recommend();
+  const maxDiag = Math.max(...Object.values(scores), 1);
+  const dimLabels = { oil_need: '控油需求', moisture_need: '保湿需求', repair_need: '修复需求', mild_need: '温和需求', anti_loss_need: '防脱需求' };
+  const papers = {};
+  for (const p of (PAPER_DATA.papers || [])) papers[p.id] = p;
+
+  let html = '<h1>发质诊断报告</h1>';
+
+  // Profile
+  html += '<div class="card"><h2>用户画像</h2>';
+  for (const [k, lbl] of Object.entries(dimLabels)) {
+    const v = engine.profile[k];
+    const cls = v > 0.6 ? 'h' : (v > 0.3 ? 'm' : 'l');
+    html += `<div class="pr"><span class="pr-l">${lbl}</span><div class="pr-w"><div class="pr-f ${cls}" style="width:${v*100}%"></div></div><span class="pr-v">${v.toFixed(2)}</span></div>`;
+  }
+  if (sensitive) html += '<div style="text-align:center;color:#f87171;font-size:12px;margin-top:8px">!! 检测到头皮敏感，已启用刺激成分过滤</div>';
+  html += '</div>';
+
+  // Diagnosis
+  html += `<div class="card"><h2>发质分类</h2><div class="diag-card"><div class="diag-p">${names[primary]}</div><div class="diag-row">`;
+  for (const [cat, s] of Object.entries(scores)) {
+    html += `<div class="diag-item"><div class="diag-n">${names[cat]}</div><div class="diag-s">${s}</div><div class="diag-b"><div class="diag-bf" style="width:${(s/maxDiag*100)}%"></div></div></div>`;
+  }
+  html += '</div></div></div>';
+
+  // Synergy
+  const trig = engine.triggeredSynergy();
+  if (trig.length > 0) {
+    html += '<div class="card"><h2>协同规则触发</h2>';
+    for (const t of trig) html += `<div class="syn-item">${t.reason}</div>`;
+    html += '</div>';
+  }
+
+  // Recommendations
+  html += '<div class="card"><h2>成分推荐</h2>';
+  const maxRec = Math.max(...recs.map(r => r.score), 1);
+  for (const r of recs) {
+    const ing = (PAPER_DATA.ingredients || []).find(i => i.name === r.name) || {};
+    const pid = ing.paper_source || '';
+    const pi = papers[pid] || {};
+    const src = pi.authors ? `${pi.authors} (${pi.year})` : pid;
+    html += `<div class="ing-row">
+      <div class="ing-i"><div class="ing-n">${r.name}${r.synergy ? '<span class="ing-s">SYNERGY</span>' : ''}</div>
+      <div class="ing-m">${ing['功效'] || ''} | ${(ing['适用发质'] || []).join(', ')}</div>
+      <div class="ing-src">${src}</div></div>
+      <div class="ing-sc"><div class="ing-sv">${r.score.toFixed(2)}</div>
+      <div class="ing-sb"><div class="ing-sbf" style="width:${(r.score/maxRec*100)}%"></div></div></div></div>`;
+  }
+  html += '</div>';
+
+  // Chart
+  const allRanked = engine.recommend().allRanked.slice(0, 8);
+  html += '<div class="card"><h2>匹配度排行榜</h2>';
+  for (const r of allRanked) {
+    html += `<div class="chart-row"><span class="chart-l">${r.name}</span><div class="chart-w"><div class="chart-f" style="width:${r.score*100}%"></div></div><span class="chart-v">${r.score.toFixed(2)}</span></div>`;
+  }
+  html += '</div>';
+
+  // Avoid
+  const avoid = engine.avoidList();
+  html += '<div class="card"><h2>建议避免成分</h2><div class="avoid-tags">';
+  if (avoid.length === 0) html += '<span style="color:rgba(255,255,255,.3)">无特定需避免成分</span>';
+  else for (const a of avoid) html += `<span class="avoid-tag">${a}</span>`;
+  html += '</div></div>';
+
+  document.getElementById('result-content').innerHTML = html;
+  document.getElementById('survey-pg').style.display = 'none';
+  document.getElementById('result-pg').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function backToSurvey() {
+  document.getElementById('survey-pg').style.display = 'block';
+  document.getElementById('result-pg').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+// Init
+buildSurvey();
+</script>
+</body>
+</html>
