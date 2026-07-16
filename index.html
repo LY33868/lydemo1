@@ -105,6 +105,14 @@ h2{color:#e0e0ff;font-size:16px;margin-bottom:14px;padding-bottom:8px;border-bot
     </div>
   </div>
 </div>
+
+<div class="card" id="unmet-card" style="margin-top:16px;border-color:rgba(245,158,11,.3);display:none">
+  <h2 style="text-align:center;color:#fbbf24">帮我们做得更好 (10秒)</h2>
+  <div id="unmet-content"></div>
+</div>
+<div id="unmet-btn-wrap" style="text-align:center;margin-top:12px;display:none">
+  <button onclick="showUnmetForm()" style="padding:10px 24px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:10px;color:#fbbf24;cursor:pointer;font-size:13px;transition:all .2s" onmouseover="this.style.background='rgba(245,158,11,.25)'" onmouseout="this.style.background='rgba(245,158,11,.15)'">没有找到合适的产品？帮研发改进 (10秒)</button>
+</div>
 <button class="back-btn" onclick="backToSurvey()">重新测试</button>
 </div>
 
@@ -374,6 +382,30 @@ function showResult(answers) {
   document.getElementById('survey-pg').style.display = 'none';
   document.getElementById('result-pg').style.display = 'block';
   window.scrollTo(0, 0);
+}
+
+
+function showUnmetForm() {
+  var card = document.getElementById('unmet-card');
+  card.style.display = 'block';
+  card.innerHTML = '<h2 style="text-align:center;color:#fbbf24">没有找到合适的产品？</h2>' +
+    '<div style="color:rgba(255,255,255,.55);text-align:center;font-size:13px;margin-bottom:12px">你的反馈将直接进入珀莱雅研发需求池</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px">' +
+    ['头屑反复', '染烫受损', '头皮敏感/长痘', '控油力不够', '不够保湿', '发尾分叉', '脱发没解决', '用后扁塌'].map(function(t,i){return '<button onclick="submitUnmet(this)" style="padding:8px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px" data-pain="'+t+'">'+t+'</button>';}).join('') +
+    '</div>' +
+    '<div id="unmet-thanks" style="color:#34d399;text-align:center;font-size:14px;display:none;padding:12px">已记录！研发团队会跟进这个需求</div>';
+  document.getElementById('unmet-btn-wrap').style.display = 'none';
+}
+function submitUnmet(btn) {
+  btn.style.background = 'rgba(245,158,11,.3)';
+  btn.style.borderColor = '#fbbf24';
+  document.getElementById('unmet-thanks').style.display = 'block';
+  try {
+    // Send to Feishu webhook (placeholder - replace with real URL)
+    var payload = { pain_point: btn.dataset.pain, source: 'H5_diagnosis', timestamp: new Date().toISOString() };
+    console.log('C2M Feedback:', payload);
+    // fetch('https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_WEBHOOK', {method:'POST',body:JSON.stringify({msg_type:'text',content:{text:JSON.stringify(payload)}})});
+  } catch(e) { console.log('C2M webhook not configured'); }
 }
 
 function backToSurvey() {
