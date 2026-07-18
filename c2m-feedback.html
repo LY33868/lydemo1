@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>C2M需求雷达 - 珀莱雅</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(135deg,#0a1628,#1a2a4a,#0f2040);min-height:100vh;
+  display:flex;justify-content:center;align-items:center;padding:20px}
+.card{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;padding:32px;max-width:420px;width:100%}
+h1{color:#fff;font-size:20px;text-align:center;margin-bottom:4px}
+.sub{color:rgba(255,255,255,.4);text-align:center;font-size:13px;margin-bottom:28px}
+label{color:rgba(255,255,255,.7);font-size:13px;margin-bottom:6px;display:block}
+input,select{width:100%;padding:12px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;color:#fff;font-size:14px;margin-bottom:18px;outline:none;transition:border .2s}
+input:focus,select:focus{border-color:#4d8cf7}
+input::placeholder{color:rgba(255,255,255,.3)}
+select{appearance:none;cursor:pointer}
+select option{background:#1a2a4a;color:#fff}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,#2956c2,#4d8cf7);border:none;border-radius:12px;
+  color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(41,86,194,.4)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.msg{padding:12px;border-radius:10px;margin-top:16px;font-size:13px;text-align:center;display:none}
+.msg.ok{display:block;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.25);color:#34d399}
+.msg.err{display:block;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.25);color:#fca5a5}
+.note{color:rgba(255,255,255,.25);text-align:center;font-size:11px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>C2M需求雷达</h1>
+  <div class="sub">珀莱雅洗护 · 你的反馈直达研发</div>
+
+  <label for="pain">痛点描述</label>
+  <input id="pain" type="text" placeholder="例如：洗完头头屑还是很多..." maxlength="200">
+
+  <label for="source">反馈来源</label>
+  <select id="source">
+    <option value="H5诊断偏差" selected>H5诊断偏差</option>
+    <option value="客服投诉">客服投诉</option>
+    <option value="社媒抓取">社媒抓取</option>
+    <option value="问卷">问卷</option>
+  </select>
+
+  <button class="btn" id="submit" onclick="doSubmit()">提交反馈</button>
+  <div class="msg" id="msg"></div>
+  <div class="note">数据将写入飞书「C2M需求雷达表」</div>
+</div>
+
+<script>
+// ============================================================
+// 替换为你的飞书 Webhook URL
+// 路径：飞书多维表格 -> 自动化 -> Webhook触发 -> 复制URL
+// ============================================================
+const WEBHOOK_URL = 'https://larkcommunity.feishu.cn/base/automation/webhook/event/LFkfaBULqwBABGhN3u9c82dznmc';
+
+async function doSubmit() {
+  const pain = document.getElementById('pain').value.trim();
+  const source = document.getElementById('source').value;
+  const btn = document.getElementById('submit');
+  const msg = document.getElementById('msg');
+
+  // Validate
+  if (!pain) {
+    msg.className = 'msg err';
+    msg.textContent = '请填写痛点描述';
+    return;
+  }
+
+  // Loading
+  btn.disabled = true;
+  btn.textContent = '提交中...';
+  msg.className = 'msg';
+  msg.style.display = 'none';
+
+  // Build payload
+  const payload = {
+    '痛点描述': pain,
+    '反馈来源': source,
+    '热度频次': 1,
+    '当前状态': '待评估',
+    '提交时间': new Date().toISOString()
+  };
+
+  try {
+    const resp = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (resp.ok) {
+      msg.className = 'msg ok';
+      msg.textContent = '已收到反馈！研发团队会跟进这个需求。';
+      document.getElementById('pain').value = '';
+    } else {
+      throw new Error('HTTP ' + resp.status);
+    }
+  } catch(e) {
+    // CORS may block browser direct POST. Try no-cors mode.
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      msg.className = 'msg ok';
+      msg.textContent = '已提交（no-cors模式）！请检查飞书表格确认数据已写入。';
+      document.getElementById('pain').value = '';
+    } catch(e2) {
+      msg.className = 'msg err';
+      msg.textContent = '浏览器跨域拦截。请将此页面部署到服务器后使用，或直接用 curl 测试（curl已通过）。';
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = '提交反馈';
+}
+</script>
+</body>
+</html>

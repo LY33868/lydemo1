@@ -404,9 +404,9 @@ function submitUnmet(btn) {
   try {
     // Send to Feishu webhook (placeholder - replace with real URL)
     var payload = { pain_point: btn.dataset.pain, source: 'H5_diagnosis', timestamp: new Date().toISOString() };
-    console.log('C2M Feedback:', payload);
-    // fetch('https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_WEBHOOK', {method:'POST',body:JSON.stringify({msg_type:'text',content:{text:JSON.stringify(payload)}})});
-  } catch(e) { console.log('C2M webhook not configured'); }
+    var C2M_URL = 'https://larkcommunity.feishu.cn/base/automation/webhook/event/LFkfaBULqwBABGhN3u9c82dznmc';
+    fetch(C2M_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({'痛点描述':btn.dataset.pain,'反馈来源':'H5诊断偏差','热度频次':1,'当前状态':'待评估','提交时间':new Date().toISOString()})});
+  } catch(e) { console.log('C2M submit error:', e); }
 }
 
 function backToSurvey() {
