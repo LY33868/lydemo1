@@ -411,9 +411,10 @@ function submitRadar() {
   var msg = document.getElementById('radar-msg');
   btn.disabled = true; btn.textContent = '提交中...';
   var payload = {'痛点描述':pain,'反馈来源':source,'热度频次':1,'当前状态':'待评估','提交时间':new Date().toISOString()};
-  fetch('https://larkcommunity.feishu.cn/base/automation/webhook/event/LFkfaBULqwBABGhN3u9c82dznmc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  // Local proxy -> Feishu. Deploy proxy.py on same server, or use ngrok for public access.
+  fetch('/api/c2m/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
     .then(function(r){msg.style.display='block';msg.style.color='#34d399';msg.textContent='已提交！研发团队会跟进。';})
-    .catch(function(e){msg.style.display='block';msg.style.color='#fca5a5';msg.textContent='浏览器跨域拦截。部署到Pages后正常。';})
+    .catch(function(e){msg.style.display='block';msg.style.color='#fca5a5';msg.textContent='代理未启动。运行: python proxy.py';})
     .finally(function(){btn.disabled=false;btn.textContent='提交到研发需求池';});
 }
 
